@@ -102,8 +102,7 @@ void Robot::TeleopPeriodic() {
   m_robotDrive.DriveCartesian(fighterX*speedMod, -fighterY, fighterZ); //https://docs.wpilib.org/en/stable/docs/software/actuators/wpi-drive-classes.html
 
   if (climbButton) {
-    m_leftClimbMotor.Set(0.25);
-    m_rightClimbMotor.Set(0.25); //don't know if this will work
+    m_climbMotor.Set(0.25); //don't know if this will work
 
   }
 

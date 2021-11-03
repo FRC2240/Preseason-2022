@@ -62,22 +62,20 @@ frc::MecanumDrive m_robotDrive{m_frontRightMotor, m_backRightMotor, m_frontLeftM
                                  m_rearRight};
 */
 
+
 //Binding motors to controllers, season one, episode four
   //Neo motors
   static const int armMotorDeviceID = 1;
   static const int grabberMotorDeviceID = 2;
-  static const int leftClimbMotorDeviceID = 3;
-  static const int rightClimbMotorDeviceID = 4;
+  static const int climbMotorDeviceID = 3;
 
   rev::CANSparkMax m_armMotor{armMotorDeviceID, rev::CANSparkMax::MotorType::kBrushless};
   rev::CANSparkMax m_grabberMotor{grabberMotorDeviceID, rev::CANSparkMax::MotorType::kBrushless};
-  rev::CANSparkMax m_leftClimbMotor{leftClimbMotorDeviceID, rev::CANSparkMax::MotorType::kBrushless};
-  rev::CANSparkMax m_rightClimbMotor{rightClimbMotorDeviceID, rev::CANSparkMax::MotorType::kBrushless};
+  rev::CANSparkMax m_climbMotor{climbMotorDeviceID, rev::CANSparkMax::MotorType::kBrushless};
 
   rev::CANEncoder m_armEncoder = m_armMotor.GetEncoder();
   rev::CANEncoder m_grabberEncoder = m_grabberMotor.GetEncoder();
-  rev::CANEncoder m_leftClimbEncoder = m_leftClimbMotor.GetEncoder();
-  rev::CANEncoder m_rightClimbEncoder = m_rightClimbMotor.GetEncoder();
+  rev::CANEncoder m_climbEncoder = m_climbMotor.GetEncoder();
 
   //timer
   frc::Timer autoTimer;
