@@ -2,6 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+
 #include "Robot.h"
 
 #include <iostream>
@@ -57,15 +58,15 @@ void Robot::AutonomousPeriodic() {
 }
 
 void Robot::TeleopInit() {
-  bool toggleE = false;
+
 }
 
 void Robot::TeleopPeriodic() {
   //read joystick controls
   // I hate you, Ethan
-  double strafeRight = m_stick.GetRawAxis(2); //Possibly Reversed
-  double backForth = m_stick.GetRawAxis(1);
-  double rotate = m_stick.GetRawAxis(3); //Possibly reversed
+  double fighterY = m_stick.GetRawAxis(2); //Possibly Reversed
+  double fighterX = m_stick.GetRawAxis(1);
+  double fighterZ = m_stick.GetRawAxis(3); //Possibly reversed
   //double Throttle = m_stick.GetRawAxis(3); //Change to whatever the Z axis is
   double redMode = m_stick.GetRawButtonPressed(25);
   double yellowMode = m_stick.GetRawButtonPressed(24);
@@ -95,7 +96,7 @@ void Robot::TeleopPeriodic() {
     std::cout << "E";
   }
 
-  m_robotDrive.driveCartesian(backForth*speedMod, -strafeRight, rotate); //https://docs.wpilib.org/en/stable/docs/software/actuators/wpi-drive-classes.html
+  m_robotDrive.driveCartesian(fighterX*speedMod, -fighterY, fighterZ); //https://docs.wpilib.org/en/stable/docs/software/actuators/wpi-drive-classes.html
 
   if (climbButton) {
     m_leftClimbMotor.Set(0.25);
@@ -104,10 +105,20 @@ void Robot::TeleopPeriodic() {
   }
 
   if (holdTrigger) {
-    m_armMotor.Set(0.1);
+    //This extends the arm for putting on the gear
+    //Use buttonC to deactivate the piston
+    //maybe
+    if (m_armMotorEncoder.GetPosition()<= 10.5 ) { //https://www.chiefdelphi.com/t/neo-motor-encoder-ticks-per-roataion/347126 || 42 ticks per rotation
+      //I am fucking this up. Full rotations will fuck this up. A lot.
+      m_armMotor.Set(0.1);
+    }
+    if (m_armMotorEncoder.GetPosition() >= 10.5 ) {
+      m_armMotor.Set(0.0);
   }
 
+    //I don't know where default is. This is highly experimental.
   if (!holdTrigger) {
+    if (m_armMotorEncoder.GetPosition() <= 0 ) {
     m_armMotor.Set(-0.1);
   }
 
@@ -118,8 +129,6 @@ void Robot::TeleopPeriodic() {
   if (!lowTrigger) {
     m_grabberMotor.Set(frc::DoubleSolenoid::Value::kReverse);
   }
-
-
 
 
 }
