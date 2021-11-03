@@ -2,6 +2,11 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+<<<<<<< HEAD
+=======
+#pragma once
+//added from 2021 and Phoenix for falcons
+>>>>>>> 6f182bb0f073e7b987272d0c2a68c1f2eb26c985
 #include <frc/TimedRobot.h>
 #include <frc/Joystick.h>
 #include <frc/drive/DifferentialDrive.h>
@@ -17,7 +22,11 @@
 
 #include "rev/CANSparkMax.h"
 #include "ctre/Phoenix.h"
+<<<<<<< HEAD
 #include <frc/drive/MecanumDrive.h>
+=======
+
+>>>>>>> 6f182bb0f073e7b987272d0c2a68c1f2eb26c985
 
 class Robot : public frc::TimedRobot {
  public:
@@ -36,6 +45,7 @@ class Robot : public frc::TimedRobot {
   frc::SendableChooser<std::string> m_chooser;
   // Miscellaneous Motor IDs
   // Neos only, Falcons are somewhere else
+<<<<<<< HEAD
  static const int armMotorDeviceID = 1;
   static const int grabberMotorDeviceID = 2;
   static const int leftClimbMotorDeviceID = 3;
@@ -52,6 +62,33 @@ class Robot : public frc::TimedRobot {
 frc::MecanumDrive m_robotDrive{m_frontRightMotor, m_backRightMotor, m_frontLeftMotor, m_backLeftMotor};
 
 //Binding motors to controllers, season one, episode four
+=======
+  static const int armMotorDeviceID = 1;
+  static const int grabberMotorDeviceID = 2;
+  static const int leftClimbMotorDeviceID = 3;
+  static const int rightClimbMotorDeviceID = 4;
+
+  //"DONE": Drive Code
+  //These are two ways I've seen talons initialized, the first set being an augmentation of an initialization of TalonSRX, the second set from the CrossTheRoadELec repository on Github for TalonFX differential drive (both example sets were written in cpp)
+  TalonFX frontRightMotor = {5};
+  TalonFX frontLeftMotor = {6}; 
+  TalonFX backRightMotor = {7};
+  TalonFX backLeftMotor = {8}; 
+
+/*
+  WPI_TalonFX * _rghtFront = new WPI_TalonFX(5);
+	WPI_TalonFX * _rghtFollower = new WPI_TalonFX(7);
+	WPI_TalonFX * _leftFront = new WPI_TalonFX(6);
+	WPI_TalonFX * _leftFollower = new WPI_TalonFX(8);
+*/ 
+
+  //"Joystick"
+  frc::Joystick m_stick{0};
+  static const int leftControlStick = 1; //used to move
+  static const int rightControlStick = 4; //used to rotate
+
+  //Binding motors to controllers, season one, episode four
+>>>>>>> 6f182bb0f073e7b987272d0c2a68c1f2eb26c985
   //Neo motors
   rev::CANSparkMax m_armMotor{armMotorDeviceID, rev::CANSparkMax::MotorType::kBrushless};
   rev::CANSparkMax m_grabberMotor{grabberMotorDeviceID, rev::CANSparkMax::MotorType::kBrushless};
@@ -65,11 +102,31 @@ frc::MecanumDrive m_robotDrive{m_frontRightMotor, m_backRightMotor, m_frontLeftM
 
   // Limelight
   //Copied from 2021
+<<<<<<< HEAD
  // std::shared_ptr<NetworkTable> m_table = nt::NetworkTableInstance::GetDefault().GetTable("limelight-scorpio"); //no idea
   double tx_OFFSET = 0.0; // old = 3.0
 
   //timer
   frc::Timer autoTimer;
+=======
+  std::shared_ptr<NetworkTable> m_table = nt::NetworkTableInstance::GetDefault().GetTable("limelight-scorpio"); //missing a library?
+  double tx_OFFSET = 0.0; // old = 3.0
+
+  static constexpr int kFrontLeftChannel = 0;
+  static constexpr int kRearLeftChannel = 1;
+  static constexpr int kFrontRightChannel = 2;
+  static constexpr int kRearRightChannel = 3;
+
+  static constexpr int kJoystickChannel = 0;
+
+  frc::PWMVictorSPX m_frontLeft{kFrontLeftChannel};
+  frc::PWMVictorSPX m_rearLeft{kRearLeftChannel};
+  frc::PWMVictorSPX m_frontRight{kFrontRightChannel};
+  frc::PWMVictorSPX m_rearRight{kRearRightChannel};
+  frc::MecanumDrive m_robotDrive{m_frontLeft, m_rearLeft, m_frontRight,
+                                 m_rearRight};
+
+>>>>>>> 6f182bb0f073e7b987272d0c2a68c1f2eb26c985
 
   //pneumatics//
   frc::DoubleSolenoid m_intakeleft{0, 7};
