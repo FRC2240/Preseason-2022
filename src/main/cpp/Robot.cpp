@@ -10,9 +10,11 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 
 void Robot::RobotInit() {
+  /* no idea what's supposed to go in here
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
+  */
 }
 
 /**
@@ -54,15 +56,13 @@ void Robot::AutonomousInit() {
 void Robot::AutonomousPeriodic() {
   autoTimer.Start();
   if (autoTimer.Get() <= 0.25) {
-    m_robotDrive.driveCartesian(.5,0,0);
+    m_robotDrive.DriveCartesian(.5,0,0);
   } else {
     // Default Auto goes here
   }
 }
 
-void Robot::TeleopInit() {
-
-}
+void Robot::TeleopInit() {}
 
 void Robot::TeleopPeriodic() {
   //read joystick controls
@@ -85,7 +85,7 @@ void Robot::TeleopPeriodic() {
   double speedMod;
 
   if (redMode) {
-    SpeedMod = 3;
+    speedMod = 3;
   }
   else if (yellowMode) {
     speedMod = 1;
@@ -99,7 +99,7 @@ void Robot::TeleopPeriodic() {
     std::cout << "E";
   }
 
-  m_robotDrive.driveCartesian(fighterX*speedMod, -fighterY, fighterZ); //https://docs.wpilib.org/en/stable/docs/software/actuators/wpi-drive-classes.html
+  m_robotDrive.DriveCartesian(fighterX*speedMod, -fighterY, fighterZ); //https://docs.wpilib.org/en/stable/docs/software/actuators/wpi-drive-classes.html
 
   if (climbButton) {
     m_leftClimbMotor.Set(0.25);
@@ -111,17 +111,17 @@ void Robot::TeleopPeriodic() {
     //This extends the arm for putting on the gear
     //Use buttonC to deactivate the piston
     //maybe
-    if (m_armMotorEncoder.GetPosition()<= 10.5 ) { //https://www.chiefdelphi.com/t/neo-motor-encoder-ticks-per-roataion/347126 || 42 ticks per rotation
+    if (m_armEncoder.GetPosition()<= 10.5 ) { //https://www.chiefdelphi.com/t/neo-motor-encoder-ticks-per-roataion/347126 || 42 ticks per rotation
       //I am fucking this up. Full rotations will fuck this up. A lot.
       m_armMotor.Set(0.1);
     }
-    if (m_armMotorEncoder.GetPosition() >= 10.5 ) {
+    if (m_armEncoder.GetPosition() >= 10.5 ) {
       m_armMotor.Set(0.0);
   }
 
     //I don't know where default is. This is highly experimental.
   if (!holdTrigger) {
-    if (m_armMotorEncoder.GetPosition() <= 0 ) {
+    if (m_armEncoder.GetPosition() <= 0 ) {
     m_armMotor.Set(-0.1);
   }
 
@@ -133,11 +133,12 @@ void Robot::TeleopPeriodic() {
     m_grabberMotor.Set(frc::DoubleSolenoid::Value::kReverse);
   }
 
-
+}
+//bifle
+  }
 }
 
 void Robot::DisabledInit() {}
-
 void Robot::DisabledPeriodic() {}
 
 void Robot::TestInit() {}
@@ -149,3 +150,4 @@ int main() {
   return frc::StartRobot<Robot>();
 }
 #endif
+  
