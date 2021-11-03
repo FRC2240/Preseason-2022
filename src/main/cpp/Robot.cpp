@@ -36,6 +36,7 @@ void Robot::RobotPeriodic() {}
  * make sure to add them to the chooser code above as well.
  */
 void Robot::AutonomousInit() {
+  /*
   m_autoSelected = m_chooser.GetSelected();
   // m_autoSelected = SmartDashboard::GetString("Auto Selector",
   //     kAutoNameDefault);
@@ -46,11 +47,13 @@ void Robot::AutonomousInit() {
   } else {
     // Default Auto goes here
   }
+  */
 }
 
 void Robot::AutonomousPeriodic() {
-  if (m_autoSelected == kAutoNameCustom) {
-    // Custom Auto goes here
+  autoTimer.Start();
+  if (autoTimer.Get() <= 0.25) {
+    m_robotDrive.driveCartesian(.5,0,0);
   } else {
     // Default Auto goes here
   }
