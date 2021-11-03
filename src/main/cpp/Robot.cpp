@@ -56,61 +56,68 @@ void Robot::AutonomousPeriodic() {
   }
 }
 
-void Robot::TeleopInit() {}
+void Robot::TeleopInit() {
+  bool toggleE = false;
+}
 
 void Robot::TeleopPeriodic() {
-  void ReadJoysticControls() {
-    //read joystick controls
-    // I hate you, Ethan
-    double strafeRight = m_stick.GetRawAxis(1); //Change "1" to whatever moving the joystick left and right does. X axis
-    double backForth = m_stick.GetRawAxis(4); //Change "4" to whatever moving the stick back and forth is. Y axis
-    double rotate = m_stick.GetRawAxis(0); //Change to what moving joystick does. "RZ axis"
-    //double Throttle = m_stick.GetRawAxis(3); //Change to whatever the Z axis is
-    double redMode = m_stick.GetRawButtonPressed(25);
-    double yellowMode = m_stick.GetRawButtonPressed(24);
-    double greenMode = m_stick.GetRawButtonPressed(23);
+  //read joystick controls
+  // I hate you, Ethan
+  double strafeRight = m_stick.GetRawAxis(2); //Possibly Reversed
+  double backForth = m_stick.GetRawAxis(1);
+  double rotate = m_stick.GetRawAxis(3); //Possibly reversed
+  //double Throttle = m_stick.GetRawAxis(3); //Change to whatever the Z axis is
+  double redMode = m_stick.GetRawButtonPressed(25);
+  double yellowMode = m_stick.GetRawButtonPressed(24);
+  double greenMode = m_stick.GetRawButtonPressed(23);
 
-    double climbButton = m_stick.GetRawButtonPressed(1); //Fire!
-    double holdTrigger = m_stick.GetRawButtonPressed(14);
-    double lowTrigger = m_stick.GetRawButtonPressed(5);
-    double buttonA = m_stick.GetRawButtonPressed(2);
-    double buttonB = m_stick.GetRawButtonPressed(3);
-    double buttonC = m_stick.GetRawButtonPressed(4);
-    double buttonE = m_stick.GetRawButtonPressed(7);
-    double speedMod;
-    if (redMode) {
-     SpeedMod = 3;
-    }
-    else if (yellowMode) {
-      speedMod = 1;
-    }
+  double climbButton = m_stick.GetRawButtonPressed(1); //Fire!
+  double holdTrigger = m_stick.GetRawButtonPressed(0);
+  double lowTrigger = m_stick.GetRawButtonPressed(5);
+  double buttonA = m_stick.GetRawButtonPressed(2);
+  double buttonB = m_stick.GetRawButtonPressed(3);
+  double buttonC = m_stick.GetRawButtonPressed(4);
+  double buttonE = m_stick.GetRawButtonPressed(7);
+  double speedMod;
 
-    else if (greenMode) {
-      speedMod = 0.5;
-    }
-
-    else if (buttonE) {
-      std::cout << "E";
-    }
-
-    ReadJoystickControls();
-
-    m_robotDrive.ArcadeDrive(backForth*speedMod, rotate); //I don't know if ArcadeDrive is right for this, I doubt it is.
+  if (redMode) {
+    SpeedMod = 3;
   }
+  else if (yellowMode) {
+    speedMod = 1;
+  }
+
+  else if (greenMode) {
+    speedMod = 0.5;
+  }
+
+  else if (buttonE) {
+    std::cout << "E";
+  }
+
+  m_robotDrive.driveCartesian(backForth*speedMod, -strafeRight, rotate); //https://docs.wpilib.org/en/stable/docs/software/actuators/wpi-drive-classes.html
+
   if (climbButton) {
-    m_leftClimbMotor.Set(frc::DoubleSolenoid::Value::kReverse);
-    m_rightClimbMotor.Set(frc::DoubleSolenoid::Value::kReverse); //don't know if this will work
+    m_leftClimbMotor.Set(0.25);
+    m_rightClimbMotor.Set(0.25); //don't know if this will work
+
   }
 
   if (holdTrigger) {
-    m_armMotor.Set(frc::DoubleSolenoid::Value::kForward); 
-    m_grabberMotor.Set(frc::DoubleSolenoid::Value::kForward); 
+    m_armMotor.Set(0.1);
   }
 
   if (!holdTrigger) {
-    m_grabberMotor.Set(frc::DoubleSolenoid::Value::kReverse); 
+    m_armMotor.Set(-0.1);
   }
 
+  if (lowTrigger) {
+    m_grabberMotor.Set(frc::DoubleSolenoid::Value::kForward);
+  }
+
+  if (!lowTrigger) {
+    m_grabberMotor.Set(frc::DoubleSolenoid::Value::kReverse);
+  }
 
 
 
