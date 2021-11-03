@@ -30,24 +30,24 @@ class Robot : public frc::TimedRobot {
   frc::SendableChooser<std::string> m_chooser;
   // Miscellaneous Motor IDs
   // Neos only, Falcons are somewhere else
-  const std::int armMotorID = 1;
-  const std::int grabberMotorID = 2;
-  const std::int leftClimbMotorID = 3;
-  const std::int rightClimbMotorID = 4;
+  const std::int armMotorDeviceID = 1;
+  const std::int grabberMotorDeviceID = 2;
+  const std::int leftClimbMotorDeviceID = 3;
+  const std::int rightClimbMotorDeviceID = 4;
 
   //TODO: DRIVE CODE
 
   //"Joystick"
   frc::Joystick m_stick{0};
-  const std::int leftControlStick = 1; //used to move
-  const std::int rightControlStick = 4; //used to rotate
+  const std::int leftControlStickID = 1; //used to move
+  const std::int rightControlStickDeviceID = 4; //used to rotate
 
   //Binding motors to controllers, season one, episode four
   //Neo motors
-  rev::CANSparkMax m_armMotor{armMotorID, rev::CANSparkMax::MotorType::kBrushless};
-  rev::CANSparkMax m_grabberMotor{grabberMotorID, rev::CANSparkMax::MotorType::kBrushless};
-  rev::CANSparkMax m_leftClimbMotor{leftClimbMotorID, rev::CANSparkMax::MotorType::kBrushless};
-  rev::CANSparkMax m_rightClimbMotor{rightClimbMotorID, rev::CANSparkMax::MotorType::kBrushless};
+  rev::CANSparkMax m_armMotor{armMotorDeviceID, rev::CANSparkMax::MotorType::kBrushless};
+  rev::CANSparkMax m_grabberMotor{grabberMotorDeviceID, rev::CANSparkMax::MotorType::kBrushless};
+  rev::CANSparkMax m_leftClimbMotor{leftClimbMotorDeviceID, rev::CANSparkMax::MotorType::kBrushless};
+  rev::CANSparkMax m_rightClimbMotor{rightClimbMotorDeviceID, rev::CANSparkMax::MotorType::kBrushless};
 
   rev::CANEncoder m_armEncoder = m_armMotor.GetEncoder();
   rev::CANEncoder m_grabberEncoder = m_grabberMotor.GetEncoder();
