@@ -56,13 +56,16 @@ void Robot::AutonomousInit() {
 void Robot::AutonomousPeriodic() {
   autoTimer.Start();
   if (autoTimer.Get() <= 0.25) {
-    m_robotDrive.DriveCartesian(.5,0,0);
+    m_robotDrive.DriveCartesian(0.5,0,0);
   } else {
     // Default Auto goes here
   }
 }
 
-void Robot::TeleopInit() {}
+void Robot::TeleopInit() {
+    bool lowTriggerToggle = false;
+    bool triggerToggle = false;
+}
 
 void Robot::TeleopPeriodic() {
   //read joystick controls
@@ -71,13 +74,14 @@ void Robot::TeleopPeriodic() {
   double fighterX = m_stick.GetRawAxis(1);
   double fighterZ = m_stick.GetRawAxis(3); //Possibly reversed
   //double Throttle = m_stick.GetRawAxis(3); //Change to whatever the Z axis is
-  double redMode = m_stick.GetRawButtonPressed(25);
+  double redMode = m_stick.GetRawButtonPressed(25);         // hyperspeed and fun
   double yellowMode = m_stick.GetRawButtonPressed(24);
-  double greenMode = m_stick.GetRawButtonPressed(23);
+  double greenMode = m_stick.GetRawButtonPressed(23);       // slow and boring
 
   double climbButton = m_stick.GetRawButtonPressed(1); //Fire!
   double holdTrigger = m_stick.GetRawButtonPressed(0);
   double lowTrigger = m_stick.GetRawButtonPressed(5);
+  
   double buttonA = m_stick.GetRawButtonPressed(2);
   double buttonB = m_stick.GetRawButtonPressed(3);
   double buttonC = m_stick.GetRawButtonPressed(4);
@@ -91,11 +95,11 @@ void Robot::TeleopPeriodic() {
     speedMod = 1;
   }
 
-  else if (greenMode) {
+  if (greenMode) {
     speedMod = 0.5;
   }
 
-  else if (buttonE) {
+  if (buttonE) {
     std::cout << "E";
   }
 
@@ -107,35 +111,45 @@ void Robot::TeleopPeriodic() {
   }
 
   if (holdTrigger) {
-    //This extends the arm for putting on the gear
-    //Use buttonC to deactivate the piston
-    //maybe
-    if (m_armEncoder.GetPosition()<= 10.5 ) { //https://www.chiefdelphi.com/t/neo-motor-encoder-ticks-per-roataion/347126 || 42 ticks per rotation
-      //I am fucking this up. Full rotations will fuck this up. A lot.
-      m_armMotor.Set(0.1);
-    }
-    if (m_armEncoder.GetPosition() >= 10.5 ) {
-      m_armMotor.Set(0.0);
+    //This raises/lowers the arm for putting on the gear
+    
+    if (triggerToggle) {
+        if (m_armEncoder.GetPosition() *360 <= 90 ) {          
+        m_armMotor.Set(0.1);
+}
+        else {           // Thank you Tyler from WPILib, your advice is much appreciated (@calcmogul#3301)
+            m_armMotor.Set(0.0);
   }
-
+}
+    if (!triggerToggle) {
+        if (m_armEncoder.GetPosition() *360 <= 90 ) {           
+            m_armMotor.Set(-0.1);
+}
+        else {
+            m_armMotor.Set(0.0);
+        }
+    }
     //I don't know where default is. This is highly experimental.
   if (!holdTrigger) {
-    if (m_armEncoder.GetPosition() <= 0 ) {
+    if (m_armEncoder.GetPosition()*360 <= 35 ) {                // 35 is arbitrary. I'll do the math later 
     m_armMotor.Set(-0.1);
   }
 
-  if (lowTrigger) {
-    m_grabberMotor.Set(frc::DoubleSolenoid::Value::kForward);
+  if (lowTrigger) {                                         // Low Trigger toggles the piston
+      if (!lowTriggerToggle);
+        m_grabberMotor.Set(frc::DoubleSolenoid::Value::kForward);
+        lowTriggerToggle = true;
   }
-
-  if (!lowTrigger) {
-    m_grabberMotor.Set(frc::DoubleSolenoid::Value::kReverse);
+    else {
+        m_grabberMotor.Set(frc::DoubleSolenoid::Value::kReverse);
+        lowTrigger = false;
   }
 
 }
 //bifle
   }
 }
+// https://cynosure.neocities.org/topsneaky.html
 
 void Robot::DisabledInit() {}
 void Robot::DisabledPeriodic() {}
