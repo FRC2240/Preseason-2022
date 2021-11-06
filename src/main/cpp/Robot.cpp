@@ -79,7 +79,7 @@ void Robot::TeleopPeriodic() {
   double greenMode = m_stick.GetRawButtonPressed(23);       // slow and boring
 
   double climbButton = m_stick.GetRawButtonPressed(1); //Fire!
-  double holdTrigger = m_stick.GetRawButtonPressed(0);
+  double holdTrigger = m_stick.GetRawButtonPressed(0); //Misnomer. You don't need to hold the button
   double lowTrigger = m_stick.GetRawButtonPressed(5);
   
   double buttonA = m_stick.GetRawButtonPressed(2);
@@ -87,6 +87,9 @@ void Robot::TeleopPeriodic() {
   double buttonC = m_stick.GetRawButtonPressed(4);
   double buttonE = m_stick.GetRawButtonPressed(7);
   double speedMod;
+
+  cout << m_armEncoder.GetPosition() * 360; //Testing for the arm
+
 
   if (redMode) {
     speedMod = 3;
@@ -103,10 +106,12 @@ void Robot::TeleopPeriodic() {
     std::cout << "E";
   }
 
-  m_robotDrive.DriveCartesian(fighterX*speedMod, -fighterY, fighterZ); //https://docs.wpilib.org/en/stable/docs/software/actuators/wpi-drive-classes.html
+  m_robotDrive.DriveCartesian(fighterX*speedMod, -fighterY*speedMod, fighterZ*speedMod); //https://docs.wpilib.org/en/stable/docs/software/actuators/wpi-drive-classes.html
 
-  if (climbButton) {
+  if (climbButton && m_climbEncoder.GetVelocity() < 500) {
     m_climbMotor.Set(0.25); //don't know if this will work
+
+
 
   }
 
@@ -114,7 +119,7 @@ void Robot::TeleopPeriodic() {
     //This raises/lowers the arm for putting on the gear
     
     if (triggerToggle) {
-        if (m_armEncoder.GetPosition() *360 <= 90 ) {          
+        if (m_armEncoder.GetPosition() *360 <= 90 ) {
         m_armMotor.Set(0.1);
 }
         else {           // Thank you Tyler from WPILib, your advice is much appreciated (@calcmogul#3301)
@@ -122,7 +127,7 @@ void Robot::TeleopPeriodic() {
   }
 }
     if (!triggerToggle) {
-        if (m_armEncoder.GetPosition() *360 <= 90 ) {           
+        if (m_armEncoder.GetPosition() *360 <= 90 ) {
             m_armMotor.Set(-0.1);
 }
         else {
