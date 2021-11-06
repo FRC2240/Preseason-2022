@@ -117,23 +117,15 @@ void Robot::TeleopPeriodic() {
 
   if (holdTrigger) {
     //This raises/lowers the arm for putting on the gear
-    
-    if (triggerToggle) {
-        if (m_armEncoder.GetPosition() *360 <= 90 ) {
+
+      if (m_armEncoder.GetPosition() *360 <= 90 ) { //placeholder
         m_armMotor.Set(0.1);
 }
         else {           // Thank you Tyler from WPILib, your advice is much appreciated (@calcmogul#3301)
             m_armMotor.Set(0.0);
   }
 }
-    if (!triggerToggle) {
-        if (m_armEncoder.GetPosition() *360 <= 90 ) {
-            m_armMotor.Set(-0.1);
-}
-        else {
-            m_armMotor.Set(0.0);
-        }
-    }
+
     //I don't know where default is. This is highly experimental.
   if (!holdTrigger) {
     if (m_armEncoder.GetPosition()*360 <= 35 ) {                // 35 is arbitrary. I'll do the math later 
@@ -168,4 +160,3 @@ int main() {
   return frc::StartRobot<Robot>();
 }
 #endif
-  
