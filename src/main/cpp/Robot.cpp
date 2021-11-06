@@ -63,8 +63,6 @@ void Robot::AutonomousPeriodic() {
 }
 
 void Robot::TeleopInit() {
-    bool lowTriggerToggle = false;
-    bool triggerToggle = false;
 }
 
 void Robot::TeleopPeriodic() {
@@ -88,6 +86,9 @@ void Robot::TeleopPeriodic() {
   double buttonE = m_stick.GetRawButtonPressed(7);
   double speedMod;
 
+  bool lowTriggerToggle;
+  bool triggerToggle;
+
   if (redMode) {
     speedMod = 3;
   }
@@ -107,28 +108,22 @@ void Robot::TeleopPeriodic() {
 
   if (climbButton) {
     m_climbMotor.Set(0.25); //don't know if this will work
-
   }
 
   if (holdTrigger) {
     //This raises/lowers the arm for putting on the gear
-    
-    if (triggerToggle) {
         if (m_armEncoder.GetPosition() *360 <= 90 ) {          
         m_armMotor.Set(0.1);
-}
-        else {           // Thank you Tyler from WPILib, your advice is much appreciated (@calcmogul#3301)
-            m_armMotor.Set(0.0);
-  }
-}
-    if (!triggerToggle) {
-        if (m_armEncoder.GetPosition() *360 <= 90 ) {           
+        }
+      // Thank you Tyler from WPILib, your advice is much appreciated (@calcmogul#3301)
+
+        else if (m_armEncoder.GetPosition() *360 <= 90 ) {           
             m_armMotor.Set(-0.1);
 }
         else {
             m_armMotor.Set(0.0);
         }
-    }
+  }
     //I don't know where default is. This is highly experimental.
   if (!holdTrigger) {
     if (m_armEncoder.GetPosition()*360 <= 35 ) {                // 35 is arbitrary. I'll do the math later 
@@ -145,10 +140,10 @@ void Robot::TeleopPeriodic() {
         lowTrigger = false;
   }
 
-}
 //bifle
   }
 }
+
 // https://cynosure.neocities.org/topsneaky.html
 
 void Robot::DisabledInit() {}
