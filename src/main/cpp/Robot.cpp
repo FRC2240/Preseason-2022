@@ -92,14 +92,14 @@ void Robot::TeleopPeriodic() {
 
 
   if (redMode) {
-    speedMod = 3;
+    speedMod = 1;
   }
   else if (yellowMode) {
-    speedMod = 1;
+    speedMod = 0.66;
   }
 
   if (greenMode) {
-    speedMod = 0.5;
+    speedMod = 0.33;
   }
 
   if (buttonE) {
