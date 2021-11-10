@@ -117,8 +117,11 @@ void Robot::TeleopPeriodic() {
   if (holdTrigger) {
     //This raises/lowers the arm for putting on the gear
 
-      if (m_armEncoder.GetPosition() *360 <= 90 ) { //placeholder
+      if (m_armEncoder.GetPosition() *360 <= 90 ) { // 90 is a placeholder for a thing
+        // 
         m_armMotor.Set(0.1);
+        m_grabberMotor.set(-0.1);
+          // It's all placeholders 
         //Put the rotation of the wrist here
 }
         else {           // Thank you Tyler from WPILib, your advice is much appreciated (@calcmogul#3301)
@@ -131,6 +134,11 @@ void Robot::TeleopPeriodic() {
   if (!holdTrigger) {
     if (m_armEncoder.GetPosition()*360 <= 35 ) {                // 35 is arbitrary. I'll do the math later 
     m_armMotor.Set(-0.1);
+    m_grabberMotor.Set(-0.01);
+
+    if (m_grabberMotor.GetPosition()*360 <= 30) {
+      m_grabberMotor.Set(0.01);
+    }
   }
 
   if (lowTrigger) {                                         // Low Trigger toggles the piston
