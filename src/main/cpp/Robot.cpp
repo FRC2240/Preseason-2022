@@ -63,8 +63,7 @@ void Robot::AutonomousPeriodic() {
 }
 
 void Robot::TeleopInit() {
-    bool lowTriggerToggle = false;
-    bool triggerToggle = false;
+  
 }
 
 void Robot::TeleopPeriodic() {
@@ -87,8 +86,9 @@ void Robot::TeleopPeriodic() {
   double buttonE = m_stick.GetRawButtonPressed(7);
   double speedMod;
 
-  cout << m_armEncoder.GetPosition() * 360; //Testing for the arm
-
+  std::cout << m_armEncoder.GetPosition() * 360; //Testing for the arm
+  bool lowTriggerToggle;
+  bool triggerToggle;
 
   if (redMode) {
     speedMod = 1;
@@ -135,7 +135,7 @@ void Robot::TeleopPeriodic() {
 
   if (lowTrigger) {                                         // Low Trigger toggles the piston
       if (!lowTriggerToggle);
-        m_grabberPistion.Set(frc::DoubleSolenoid::Value::kForward);
+        m_grabberPiston.Set(frc::DoubleSolenoid::Value::kForward);
         lowTriggerToggle = true;
   }
     else {
@@ -146,7 +146,7 @@ void Robot::TeleopPeriodic() {
 }
 //bifle
   }
-}
+
 // https://cynosure.neocities.org/topsneaky.html
 
 void Robot::DisabledInit() {}
