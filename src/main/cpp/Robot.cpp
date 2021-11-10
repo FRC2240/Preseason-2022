@@ -81,7 +81,6 @@ void Robot::TeleopPeriodic() {
   double climbButton = m_stick.GetRawButtonPressed(1); //Fire!
   double holdTrigger = m_stick.GetRawButtonPressed(0); //Misnomer. You don't need to hold the button
   double lowTrigger = m_stick.GetRawButtonPressed(5);
-  
   double buttonA = m_stick.GetRawButtonPressed(2);
   double buttonB = m_stick.GetRawButtonPressed(3);
   double buttonC = m_stick.GetRawButtonPressed(4);
@@ -120,9 +119,11 @@ void Robot::TeleopPeriodic() {
 
       if (m_armEncoder.GetPosition() *360 <= 90 ) { //placeholder
         m_armMotor.Set(0.1);
+        //Put the rotation of the wrist here
 }
         else {           // Thank you Tyler from WPILib, your advice is much appreciated (@calcmogul#3301)
             m_armMotor.Set(0.0);
+            //Put the rotation of the wrist here
   }
 }
 
@@ -134,11 +135,11 @@ void Robot::TeleopPeriodic() {
 
   if (lowTrigger) {                                         // Low Trigger toggles the piston
       if (!lowTriggerToggle);
-        m_grabberMotor.Set(frc::DoubleSolenoid::Value::kForward);
+        m_grabberPistion.Set(frc::DoubleSolenoid::Value::kForward);
         lowTriggerToggle = true;
   }
     else {
-        m_grabberMotor.Set(frc::DoubleSolenoid::Value::kReverse);
+        m_grabberPiston.Set(frc::DoubleSolenoid::Value::kReverse);
         lowTrigger = false;
   }
 
