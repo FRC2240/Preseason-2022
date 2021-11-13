@@ -43,7 +43,7 @@ class Robot : public frc::TimedRobot {
   WPI_TalonFX m_frontLeftMotor = {7}; 
   WPI_TalonFX m_backLeftMotor = {8}; 
 //attempt initialize mecanum drive
-frc::MecanumDrive m_robotDrive{m_frontRightMotor, m_backRightMotor, m_frontLeftMotor, m_backLeftMotor};
+frc::MecanumDrive m_robotDrive{m_frontLeftMotor, m_backLeftMotor, m_frontRightMotor, m_backRightMotor};
 
 //another attempt to initialize mecanum drive 
 /*

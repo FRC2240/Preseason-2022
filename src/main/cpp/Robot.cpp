@@ -63,37 +63,41 @@ void Robot::AutonomousPeriodic() {
 }
 
 void Robot::TeleopInit() {
+
   
 }
 
 void Robot::TeleopPeriodic() {
   //read joystick controls
-  // I hate you, Ethan
+  // I hate you, Ethan 
+  double driveY;
+  double driveX;
+  double driveZ; 
+  double climbButton;
+  double armButton;
+  double grabberButton;
 
-    void fighterMode() {
+    //void fighterMode() { 
       // function to read controls for the joystick
-        double driveY = m_stick.GetRawAxis(2);                    //Possibly Reversed
-        double driveX = m_stick.GetRawAxis(1);
-        double driveZ = m_stick.GetRawAxis(3); //Possibly reversed
+        driveY = m_stick.GetRawAxis(0);                    //Possibly Reversed
+        driveX = m_stick.GetRawAxis(1);
+        driveZ = m_stick.GetRawAxis(5); //Possibly reversed
         //double Throttle = m_stick.GetRawAxis(3); //Change to whatever the Z axis is
-        double wheelBuddyWheel = m_stick.GetRawButtonPressed(25);         // hyperspeed and fun
-        double midSpeed = m_stick.GetRawButtonPressed(24);
-        double lowSpeed = m_stick.GetRawButtonPressed(23);       // slow and boring
 
-        double climbButton = m_stick.GetRawButtonPressed(1); //Fire!
-        double armButton = m_stick.GetRawButtonPressed(0); //Misnomer. You don't need to hold the button
-        double grabberButton = m_stick.GetRawButtonPressed(5);
+        climbButton = m_stick.GetRawButtonPressed(1); //Fire!
+        armButton = m_stick.GetRawButtonPressed(0); //Misnomer. You don't need to hold the button
+        grabberButton = m_stick.GetRawButtonPressed(5);
         double buttonA = m_stick.GetRawButtonPressed(2);
         double buttonB = m_stick.GetRawButtonPressed(3);
         double buttonC = m_stick.GetRawButtonPressed(4);
         double buttonE = m_stick.GetRawButtonPressed(7);
-  }
+//}
+/*
+  void xboxMode() {
 
-  void figherMode(){
-
-    double driveY = m_stick.GetRawAxis(2);
-    double driveX = m_stick.GetRawAxis(1);
-    double driveZ = m_stick.GetRawAxis(4);
+    driveY = m_stick.GetRawAxis(2);
+    driveX = m_stick.GetRawAxis(1);
+    driveZ = m_stick.GetRawAxis(4);
 
     double climbButton = m_stick.GetRawButtonPressed(9);
     double armButton = m_stick.GetRawButtonPressed(6);
@@ -108,39 +112,17 @@ void Robot::TeleopPeriodic() {
     }
   }
 
-  xboxMode() //change to fighterMode() if the joystick works
-
-  double speedMod;
-
+  xboxMode(); //change to fighterMode() if the joystick works
+*/
   std::cout << m_armEncoder.GetPosition() * 360; //Testing for the arm
   bool lowTriggerToggle;
   bool triggerToggle;
 
-  if (wheelBuddyWheel) {
-    speedMod = 1;
-  }
-  if (!midSpeed && !lowSpeed) {
-    speedMod = 1;
-  }
-  else if (midSpeed) {
-    speedMod = 0.66;
-  }
-
-  if (lowSpeed) {
-    speedMod = 0.33;
-  }
-
-  if (buttonE) {
-    std::cout << "E";
-  }
-
-  m_robotDrive.DriveCartesian(driveX*speedMod, -driveY*speedMod, driveZ*speedMod); //https://docs.wpilib.org/en/stable/docs/software/actuators/wpi-drive-classes.html
+  m_robotDrive.DriveCartesian(-driveY, driveX, -driveZ); //https://docs.wpilib.org/en/stable/docs/software/actuators/wpi-drive-classes.html
+  
 
   if (climbButton && m_climbEncoder.GetVelocity() < 500) {
     m_climbMotor.Set(0.25); //don't know if this will work
-
-
-
   }
 
   if (armButton) {
@@ -149,14 +131,36 @@ void Robot::TeleopPeriodic() {
       if (m_armEncoder.GetPosition() *360 <= 90 ) { // 90 is a placeholder for a thing
         // 
         m_armMotor.Set(0.1);
-        m_grabberMotor.set(-0.1);
+        m_grabberMotor.Set(-0.1);
           // It's all placeholders 
         //Put the rotation of the wrist here
+/*
+  if (holdTrigger) {
+    //This raises/lowers the arm for putting on the gear
+
+      if (m_armEncoder.GetPosition() == 0 && m_grabberEncoder < x ) {
+        m_armMotor.Set(0);
+        m_grabberMotor.Set(0.25);
+      }
+      else if (m_armEncoder.GetPosition() < y && m_grabberEncoder == x) {
+        m_grabberMotor.Set(0);
+        m_armMotor.Set(0.25);
+      }
+      else if (m_armEncoder.GetPosition() == y && m_grabberEncoder.GetPosition() > y) {
+
+      }
+
+      else {
+        m_grabberMotor.Set(0); 
+        
+      }
+      
 }
         else {           // Thank you Tyler from WPILib, your advice is much appreciated (@calcmogul#3301)
             m_armMotor.Set(0.0);
             //Put the rotation of the wrist here
   }
+  
 }
 
     //I don't know where default is. This is highly experimental.
@@ -181,8 +185,13 @@ void Robot::TeleopPeriodic() {
   }
 
 }
+*/
 //bifle
+
   }
+  }
+}
+
 
 // https://cynosure.neocities.org/topsneaky.html
 
@@ -198,3 +207,4 @@ int main() {
   return frc::StartRobot<Robot>();
 }
 #endif
+
