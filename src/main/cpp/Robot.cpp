@@ -89,7 +89,7 @@ void Robot::TeleopPeriodic() {
         double buttonE = m_stick.GetRawButtonPressed(7);
   }
 
-  void xboxMode(){
+  void figherMode(){
 
     double driveY = m_stick.GetRawAxis(2);
     double driveX = m_stick.GetRawAxis(1);
