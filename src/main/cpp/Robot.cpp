@@ -63,89 +63,165 @@ void Robot::AutonomousPeriodic() {
 }
 
 void Robot::TeleopInit() {
+
   
 }
 
 void Robot::TeleopPeriodic() {
   //read joystick controls
-  // I hate you, Ethan
-  double fighterY = m_stick.GetRawAxis(2); //Possibly Reversed
-  double fighterX = m_stick.GetRawAxis(1);
-  double fighterZ = m_stick.GetRawAxis(3); //Possibly reversed
-  //double Throttle = m_stick.GetRawAxis(3); //Change to whatever the Z axis is
-  double redMode = m_stick.GetRawButtonPressed(25);         // hyperspeed and fun
-  double yellowMode = m_stick.GetRawButtonPressed(24);
-  double greenMode = m_stick.GetRawButtonPressed(23);       // slow and boring
+  // I hate you, Ethan 
+  double driveY;
+  double driveX;
+  double driveZ; 
+  double climbButton;
+  double armButtonDeploy;
+  double armButtonReturn;
+  double grabberButton;
+  
+    //void fighterMode() { 
+      // function to read controls for the joystick
+        driveY = m_stick.GetRawAxis(0);                    //Possibly Reversed
+        driveX = m_stick.GetRawAxis(1);
+        driveZ = m_stick.GetRawAxis(5); //Possibly reversed
+        //double Throttle = m_stick.GetRawAxis(3); //Change to whatever the Z axis is
 
-  double climbButton = m_stick.GetRawButtonPressed(1); //Fire!
-  double holdTrigger = m_stick.GetRawButtonPressed(0); //Misnomer. You don't need to hold the button
-  double lowTrigger = m_stick.GetRawButtonPressed(5);
-  double buttonA = m_stick.GetRawButtonPressed(2);
-  double buttonB = m_stick.GetRawButtonPressed(3);
-  double buttonC = m_stick.GetRawButtonPressed(4);
-  double buttonE = m_stick.GetRawButtonPressed(7);
-  double speedMod;
+//all button bindings need to be tested
+        climbButton = m_stick.GetRawButtonPressed(2); //Fire!
+        armButtonDeploy = m_stick.GetRawButtonPressed(1); //Misnomer. You don't need to hold the button
+        armButtonReturn = m_stick.GetRawButtonReleased(2); // don't know
+        grabberButton = m_stick.GetRawButtonPressed(5);
+        double buttonA = m_stick.GetRawButtonPressed(2);
+        double buttonB = m_stick.GetRawButtonPressed(3);
+        double buttonC = m_stick.GetRawButtonPressed(4);
+        double buttonE = m_stick.GetRawButtonPressed(7);
+        
+/*
+  void xboxMode() {
 
+    driveY = m_stick.GetRawAxis(2);
+    driveX = m_stick.GetRawAxis(1);
+    driveZ = m_stick.GetRawAxis(4);
+
+    double climbButton = m_stick.GetRawButtonPressed(9);
+    double armButton = m_stick.GetRawButtonPressed(6);
+    double grabberButton = m_stick.GetRawButtonPressed(5);
+    double midSpeed = m_stick.GetRawAxis(6);
+    if (midSpeed > 0.25) {
+      midSpeed = 1;
+    }
+    double lowSpeed = m_stick.GetRawAxis(3);
+    if (lowSpeed > 0.25) {
+      lowSpeed = 1;
+    }
+  }
+
+  xboxMode(); //change to fighterMode() if the joystick works
+*/
   std::cout << m_armEncoder.GetPosition() * 360; //Testing for the arm
   bool lowTriggerToggle;
   bool triggerToggle;
 
-  if (redMode) {
-    speedMod = 1;
-  }
-  else if (yellowMode) {
-    speedMod = 0.66;
-  }
-
-  if (greenMode) {
-    speedMod = 0.33;
-  }
-
-  if (buttonE) {
-    std::cout << "E";
-  }
-
-  m_robotDrive.DriveCartesian(fighterX*speedMod, -fighterY*speedMod, fighterZ*speedMod); //https://docs.wpilib.org/en/stable/docs/software/actuators/wpi-drive-classes.html
+  m_robotDrive.DriveCartesian(-driveY, driveX, -driveZ); //https://docs.wpilib.org/en/stable/docs/software/actuators/wpi-drive-classes.html
+  
 
   if (climbButton && m_climbEncoder.GetVelocity() < 500) {
     m_climbMotor.Set(0.25); //don't know if this will work
-
-
-
   }
+  
+  //soft position value placeholders
+  double x; //grabber rotation- soft position 1
+  double v; //arm vertical - soft position 2
+  double y; //grabber rotation - soft position 3
+  double z; //arm deployed - final position
 
-  if (holdTrigger) {
+
+  if (armButtonDeploy) {
     //This raises/lowers the arm for putting on the gear
 
-      if (m_armEncoder.GetPosition() *360 <= 90 ) { //placeholder
-        m_armMotor.Set(0.1);
-        //Put the rotation of the wrist here
+    //grabber rotates to soft position 1
+      if (m_armEncoder.GetPosition() == 0 && m_grabberEncoder.GetPosition() < x ) {
+        m_armMotor.Set(0);
+        m_grabberMotor.Set(0.25);
+      }
+
+      //arm moves up to vertical to soft position 2
+      else if (m_armEncoder.GetPosition() < v && m_grabberEncoder.GetPosition() == x) {
+        m_grabberMotor.Set(0);
+        m_armMotor.Set(0.25);
+      }
+
+      //grabber rotates backwards to soft position 3 (movement to soft position 2 and 3 may be combined at a later point but for now they're separated for code simplicity)
+      else if (m_armEncoder.GetPosition() == v && m_grabberEncoder.GetPosition() > y) {
+        m_armMotor.Set(0);
+        m_grabberMotor.Set(-0.25);
+      }
+
+      //arm rotates down to floor to final position
+      else if (m_armEncoder.GetPosition() < z) {
+        m_grabberMotor.Set(0);
+        m_armMotor.Set(0.25);
+      }
+
+      else {
+        m_grabberMotor.Set(0); 
+        m_armMotor.Set(0);
+      } 
 }
-        else {           // Thank you Tyler from WPILib, your advice is much appreciated (@calcmogul#3301)
-            m_armMotor.Set(0.0);
-            //Put the rotation of the wrist here
+else {
+  m_armMotor.Set(0);
+  m_grabberMotor.Set(0);
+}
+if (armButtonReturn) {
+  //arm rotates back to vertical
+  if (m_armEncoder.GetPosition() == z && m_grabberEncoder.GetPosition() == y) {
+    if (m_armEncoder.GetPosition() > v) {
+    m_armMotor.Set(-0.25);
+    m_grabberMotor.Set(0);
+    }
+    //grabber rotates
+    else if (m_armEncoder.GetPosition() == v && m_grabberEncoder.GetPosition() < x) {
+      m_armMotor.Set(0);
+      m_grabberMotor.Set(0.25);
+    }
+    //arm rotates to initial position
+    else if (m_armEncoder.GetPosition() > 0 && m_grabberEncoder.GetPosition() == x) {
+      m_armMotor.Set(-0.25);
+      m_grabberMotor.Set(0);
+    }
+    //grabber rotates to initial position
+    else if (m_armEncoder.GetPosition() == 0 && m_grabberEncoder.GetPosition() > 0) {
+      m_armMotor.Set(0);
+      m_grabberMotor.Set(-0.25);
+    }
+    else {
+      m_armMotor.Set(0);
+      m_grabberMotor.Set(0);
+    }
+    
   }
 }
+else {
+  m_armMotor.Set(0);
+  m_grabberMotor.Set(0);
+}
 
-    //I don't know where default is. This is highly experimental.
-  if (!holdTrigger) {
-    if (m_armEncoder.GetPosition()*360 <= 35 ) {                // 35 is arbitrary. I'll do the math later 
-    m_armMotor.Set(-0.1);
-  }
-
-  if (lowTrigger) {                                         // Low Trigger toggles the piston
+/*
+  if (grabberButton) {                                         // Low Trigger toggles the piston
       if (!lowTriggerToggle);
-        m_grabberPiston.Set(frc::DoubleSolenoid::Value::kForward);
+        m_grabberPistonLeft.Set(frc::DoubleSolenoid::Value::kForward);
         lowTriggerToggle = true;
   }
     else {
-        m_grabberPiston.Set(frc::DoubleSolenoid::Value::kReverse);
-        lowTrigger = false;
-  }
+        m_grabberPistonLeft.Set(frc::DoubleSolenoid::Value::kReverse);
+        lowTriggerToggle = false;
+*/  
 
 }
+
+
+
 //bifle
-  }
+
 
 // https://cynosure.neocities.org/topsneaky.html
 
@@ -161,3 +237,4 @@ int main() {
   return frc::StartRobot<Robot>();
 }
 #endif
+

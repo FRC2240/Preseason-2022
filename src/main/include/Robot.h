@@ -88,7 +88,8 @@ frc::MecanumDrive m_robotDrive{m_frontRightMotor, m_backRightMotor, m_frontLeftM
 
 
   //pneumatics//
-  frc::DoubleSolenoid m_grabberPiston{0, 7};
+  frc::DoubleSolenoid m_grabberPistonLeft{0, 7};
+  frc::DoubleSolenoid m_grabberPistonRight {1,6};
 
 };
 
