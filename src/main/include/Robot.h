@@ -72,7 +72,7 @@ frc::MecanumDrive m_robotDrive{m_frontRightMotor, m_backRightMotor, m_frontLeftM
 
   rev::CANSparkMax m_armMotor{armMotorDeviceID, rev::CANSparkMax::MotorType::kBrushless};
   rev::CANSparkMax m_grabberMotor{grabberMotorDeviceID, rev::CANSparkMax::MotorType::kBrushless};
-  rev::CANSparkMax m_climbMotor{climbMotorDeviceID, re::CANSparkMax::MotorType::kBrushless};
+  rev::CANSparkMax m_climbMotor{climbMotorDeviceID, rev::CANSparkMax::MotorType::kBrushless};
 
   rev::CANEncoder m_armEncoder = m_armMotor.GetEncoder();
   rev::CANEncoder m_grabberEncoder = m_grabberMotor.GetEncoder();
@@ -88,7 +88,8 @@ frc::MecanumDrive m_robotDrive{m_frontRightMotor, m_backRightMotor, m_frontLeftM
 
 
   //pneumatics//
-  frc::DoubleSolenoid m_grabberPiston{0, 7};
+  frc::DoubleSolenoid m_grabberPistonLeft{0, 7};
+  frc::DoubleSolenoid m_grabberPistonRight {1,6};
 
 };
 
