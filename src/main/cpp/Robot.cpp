@@ -15,6 +15,8 @@ void Robot::RobotInit() {
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
   */
+
+
 }
 
 /**
@@ -54,6 +56,26 @@ void Robot::AutonomousInit() {
 }
 
 void Robot::AutonomousPeriodic() {
+    //limlight network tables?
+    //These don't show up in the 2021 bot's code but they are in the docs. Comment out if things don't want to work.
+
+    std::shared_ptr<NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
+    double targetArea = table->GetNumber("ta", 0.0);
+    double targetSkew = table->GetNumber("ts", 0.0);
+
+    double ty = m_table->GetNumber("ty", 0.0);
+    double tx = m_table->GetNumber("tx", 0.0);
+
+    if (abs(ty) >= 1) {
+        if (ty <= 1) {
+            m_robotDrive.DriveCartesian(0.5,0,ty);
+        }
+        if (ty >= 1){
+            m_robotDrive.DriveCartesian(0.5,0,-ty);
+        }
+    }
+}
+/*
   autoTimer.Start();
   if (autoTimer.Get() <= 0.25) {
     m_robotDrive.DriveCartesian(0.5,0,0);
@@ -61,7 +83,7 @@ void Robot::AutonomousPeriodic() {
     // Default Auto goes here
   }
 }
-
+ */
 void Robot::TeleopInit() {
 
   
@@ -89,11 +111,11 @@ void Robot::TeleopPeriodic() {
         climbButton = m_stick.GetRawButtonPressed(2); //Fire!
         armButtonDeploy = m_stick.GetRawButtonPressed(1); //Misnomer. You don't need to hold the button
         armButtonReturn = m_stick.GetRawButtonReleased(2); // don't know
-        grabberButton = m_stick.GetRawButtonPressed(5);
-        double buttonA = m_stick.GetRawButtonPressed(2);
+        grabberButton = m_stick.GetRawButtonPressed(6);
+        double buttonA = m_stick.GetRawButtonPressed(3);
         double buttonB = m_stick.GetRawButtonPressed(3);
         double buttonC = m_stick.GetRawButtonPressed(4);
-        double buttonE = m_stick.GetRawButtonPressed(7);
+        double buttonE = m_stick.GetRawButtonPressed(8);
         
 /*
   void xboxMode() {
