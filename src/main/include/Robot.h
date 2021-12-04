@@ -15,6 +15,10 @@
 #include <frc/controller/RamseteController.h>
 #include <frc/trajectory/TrajectoryGenerator.h>
 
+#include "frc/smartdashboard/Smartdashboard.h"
+#include "networktables/NetworkTable.h"
+#include "networktables/NetworkTableInstance.h"
+
 #include "rev/CANSparkMax.h"
 #include "ctre/Phoenix.h"
 #include <frc/drive/MecanumDrive.h>
@@ -33,6 +37,8 @@ class Robot : public frc::TimedRobot {
   void TestPeriodic() override;
 
  private:
+
+
   frc::SendableChooser<std::string> m_chooser;
     //"Joystick"
   frc::Joystick m_stick{0};
