@@ -14,6 +14,8 @@
 #include <frc/trajectory/TrajectoryUtil.h>
 #include <frc/controller/RamseteController.h>
 #include <frc/trajectory/TrajectoryGenerator.h>
+#include <networktables/NetworkTable.h>
+#include <networktables/NetworkTableInstance.h>
 
 #include "frc/smartdashboard/Smartdashboard.h"
 #include "networktables/NetworkTable.h"
@@ -35,6 +37,9 @@ class Robot : public frc::TimedRobot {
   void DisabledPeriodic() override;
   void TestInit() override;
   void TestPeriodic() override;
+  void InitializeDashboard();
+  void InitializePIDControllers();
+  void ReadDashboard();
 
  private:
 
@@ -64,16 +69,15 @@ frc::MecanumDrive m_robotDrive{m_frontRightMotor, m_backRightMotor, m_frontLeftM
   frc::PWMVictorSPX m_rearLeft{kRearLeftChannel};
   frc::PWMVictorSPX m_frontRight{kFrontRightChannel};
   frc::PWMVictorSPX m_rearRight{kRearRightChannel};
-  frc::MecanumDrive m_robotDrive{m_frontLeft, m_rearLeft, m_frontRight,
-                                 m_rearRight};
+  frc::MecanumDrive m_robotDrive{m_frontLeft, m_r
 */
 
 
 //Binding motors to controllers, season one, episode four
   //Neo motors
-  static const int armMotorDeviceID = 1;
+  static const int armMotorDeviceID = 3;
   static const int grabberMotorDeviceID = 2; //the "wrist"
-  static const int climbMotorDeviceID = 3;
+  static const int climbMotorDeviceID = 1;
   
 
   rev::CANSparkMax m_armMotor{armMotorDeviceID, rev::CANSparkMax::MotorType::kBrushless};
@@ -97,5 +101,29 @@ frc::MecanumDrive m_robotDrive{m_frontRightMotor, m_backRightMotor, m_frontLeftM
   frc::DoubleSolenoid m_grabberPistonLeft{0, 7};
   frc::DoubleSolenoid m_grabberPistonRight {1,6};
 
+  //PID initialization
+  rev::CANPIDController m_armPIDController = m_armMotor.GetPIDController();
+  rev::CANPIDController m_grabberPIDController = m_grabberMotor.GetPIDController();
+
+  struct pidCoeff {
+    double kP;
+    double kI;
+    double kD;
+    double kIz;
+    double kFF;
+    double kMinOutput;
+    double kMaxOutput;
+  };
+
+  // DETERMINE THESE EXPERIMENTALLY!!!!!!!
+  pidCoeff m_armCoeff {0.02, 0.0, 0.7, 0.0, 0.0, -1.0, 1.0};
+  pidCoeff m_grabberCoeff {0.13, 0.0, 0.0, 0.0, 0.0, -1.0, 1.0};
+  
+  double m_armRotations[2] {0.0, 1.0}; //0 is undeployed, 1 is deployed
+  double m_grabberRotations[2] {0.0, 0.0}; //0 is undeployed or in the upright position, 1 is deployed
+
+  double m_button; 
+
 };
+
 
