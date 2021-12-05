@@ -68,8 +68,9 @@ void Robot::AutonomousPeriodic() {
 }
 
 void Robot::TeleopInit() {
-  InitializeDashboard();
-  ReadDashboard();
+  ReadDashboard(); 
+  InitializePIDControllers();
+  std::cout << "arm rotations 1: " << m_armRotations[1] << "\n"; 
 }
 
 void Robot::TeleopPeriodic() {
@@ -136,13 +137,16 @@ void Robot::TeleopPeriodic() {
     m_climbMotor.Set(0.25); //don't know if this will work
   }
 
-//for testing
-  if (armButtonDeploy) {
+//for testing button binding
+
+  if (m_stick.GetRawButton(m_button)) {
     m_armPIDController.SetReference(m_armRotations[1], rev::ControlType::kPosition);
+    std::cout << "button pressed = " << m_armRotations[1] << "\n";
     std::cout << "arm encoder position: " << m_armEncoder.GetPosition() << "\n";
   }
 
-
+  
+  
 /*
   if (armButtonDeploy) {
     //This raises/lowers the arm for putting on the gear
@@ -244,7 +248,6 @@ else {
 
 */
 
-
   if (grabberButton) {                                         // Low Trigger toggles the piston
       if (!lowTriggerToggle);
         m_grabberPistonLeft.Set(frc::DoubleSolenoid::Value::kForward);
@@ -302,6 +305,8 @@ void Robot::InitializeDashboard() {
 
   frc::SmartDashboard::PutNumber("Grabber Rotations Level 0", m_grabberRotations[0]);
   frc::SmartDashboard::PutNumber("Grabber Rotations Level 1", m_grabberRotations[1]);
+
+  frc::SmartDashboard::PutNumber("Button number: ", m_button);
 }
 
 void Robot::ReadDashboard () {
@@ -309,8 +314,11 @@ void Robot::ReadDashboard () {
 
   // read PID coefficients from SmartDashboard
   p   = frc::SmartDashboard::GetNumber("Arm P Gain", 0);
+  std::cout << "Read Dashboard arm p gain: " << p << "\n";
   i   = frc::SmartDashboard::GetNumber("Arm I Gain", 0);
+  std::cout << "Read Dashboard arm i gain: " << p << "\n";
   d   = frc::SmartDashboard::GetNumber("Arm D Gain", 0);
+  std::cout << "Read Dashboard arm d gain: " << p << "\n";
   min = frc::SmartDashboard::GetNumber("Arm Min Output", 0);
   max = frc::SmartDashboard::GetNumber("Arm Max Output", 0);
 
@@ -336,11 +344,16 @@ void Robot::ReadDashboard () {
     m_grabberPIDController.SetOutputRange(min, max); 
     m_grabberCoeff.kMinOutput = min; m_grabberCoeff.kMaxOutput = max; 
 }
-  frc::SmartDashboard::GetNumber("Arm Rotations Level 0",   m_armRotations[0]);
-  frc::SmartDashboard::GetNumber("Arm Rotations Level 1",   m_armRotations[1]);
+  m_armRotations[0] = frc::SmartDashboard::GetNumber("Arm Rotations Level 0",   m_armRotations[0]);
+  m_armRotations[1] = frc::SmartDashboard::GetNumber("Arm Rotations Level 1",   m_armRotations[1]);
+  std::cout << "Read Dashboard: " << m_armRotations[1] << "\n";
 
-  frc::SmartDashboard::GetNumber("Grabber Rotations Level 0", m_grabberRotations[0]);
+m_button = frc::SmartDashboard::GetNumber("Button number: ", m_button);
+std::cout << "Read dashboard button: " << m_button << "\n";
+
+  m_grabberRotations[0] = frc::SmartDashboard::GetNumber("Grabber Rotations Level 0", m_grabberRotations[0]);
   frc::SmartDashboard::GetNumber("Grabber Rotations Level 1", m_grabberRotations[1]);
+
   }
 void Robot::DisabledInit() {}
 void Robot::DisabledPeriodic() {}

@@ -63,16 +63,15 @@ frc::MecanumDrive m_robotDrive{m_frontRightMotor, m_backRightMotor, m_frontLeftM
   frc::PWMVictorSPX m_rearLeft{kRearLeftChannel};
   frc::PWMVictorSPX m_frontRight{kFrontRightChannel};
   frc::PWMVictorSPX m_rearRight{kRearRightChannel};
-  frc::MecanumDrive m_robotDrive{m_frontLeft, m_rearLeft, m_frontRight,
-                                 m_rearRight};
+  frc::MecanumDrive m_robotDrive{m_frontLeft, m_r
 */
 
 
 //Binding motors to controllers, season one, episode four
   //Neo motors
-  static const int armMotorDeviceID = 1;
+  static const int armMotorDeviceID = 3;
   static const int grabberMotorDeviceID = 2; //the "wrist"
-  static const int climbMotorDeviceID = 3;
+  static const int climbMotorDeviceID = 1;
   
 
   rev::CANSparkMax m_armMotor{armMotorDeviceID, rev::CANSparkMax::MotorType::kBrushless};
@@ -114,9 +113,10 @@ frc::MecanumDrive m_robotDrive{m_frontRightMotor, m_backRightMotor, m_frontLeftM
   pidCoeff m_armCoeff {0.02, 0.0, 0.7, 0.0, 0.0, -1.0, 1.0};
   pidCoeff m_grabberCoeff {0.13, 0.0, 0.0, 0.0, 0.0, -1.0, 1.0};
   
-  double m_armRotations[2] {0,0}; //0 is undeployed, 1 is deployed
-  double m_grabberRotations[2] {m_armRotations[1]*0,0}; //0 is undeployed or in the upright position, 1 is deployed
+  double m_armRotations[2] {0.0, 1.0}; //0 is undeployed, 1 is deployed
+  double m_grabberRotations[2] {0.0, 0.0}; //0 is undeployed or in the upright position, 1 is deployed
 
+  double m_button; 
 
 };
 
