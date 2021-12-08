@@ -43,8 +43,10 @@ class Robot : public frc::TimedRobot {
     //"Joystick"
   frc::Joystick m_stick{0};
 
-  //TODO: DRIVE CODE
-  WPI_TalonFX m_frontRightMotor = {5};
+    frc::Compressor m_compressor;
+
+
+    WPI_TalonFX m_frontRightMotor = {5};
   WPI_TalonFX m_backRightMotor = {6};
   WPI_TalonFX m_frontLeftMotor = {7}; 
   WPI_TalonFX m_backLeftMotor = {8}; 

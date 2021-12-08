@@ -10,11 +10,18 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 
 void Robot::RobotInit() {
-  /* no idea what's supposed to go in here
-  m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
-  m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
-  frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
-  */
+    m_compressor.Start();
+
+    m_armEncoder.SetPosition(0.0);
+    m_wristEncoder.SetPosition(0.0);
+    m_climbArmEncoder.SetPosition(0.0);
+    m_climbFootEncoder.SetPosition(0.0);
+
+    /* no idea what's supposed to go in here
+    m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
+    m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
+    frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
+    */
 
 
 }
@@ -66,13 +73,27 @@ void Robot::AutonomousPeriodic() {
     double ty = m_table->GetNumber("ty", 0.0);
     double tx = m_table->GetNumber("tx", 0.0);
 
-    if (abs(ty) >= 1) {
-        if (ty <= 1) {
-            m_robotDrive.DriveCartesian(0.5,0,ty);
+    double autoDriveSpeed;
+
+    if (ta > 0.05){
+        autoDriveSpeed = 0.25;
+    }
+    if (ta > 0.25){
+        autoDriveSpeed = 0.15;
+    }
+    if (ta > 0.50){
+        autoDriveSpeed = 0.05;
+        // Deploy the arm "now"
+    }
+
+    if (abs(tx) >= 1) {
+        if (tx <= 1) {
+            m_robotDrive.DriveCartesian(autoDriveSpeed,0,tx);
         }
-        if (ty >= 1){
-            m_robotDrive.DriveCartesian(0.5,0,-ty);
+        if (tx >= 1){
+            m_robotDrive.DriveCartesian(autoDriveSpeed,0,-tx);
         }
+
     }
 }
 /*
@@ -102,16 +123,16 @@ void Robot::TeleopPeriodic() {
   
     //void fighterMode() { 
       // function to read controls for the joystick
-        driveY = m_stick.GetRawAxis(0);                    //Possibly Reversed
-        driveX = m_stick.GetRawAxis(1);
-        driveZ = m_stick.GetRawAxis(5); //Possibly reversed
+        double driveY = m_stick.GetRawAxis(0);                    //Possibly Reversed
+        double driveX = m_stick.GetRawAxis(1);
+        double driveZ = m_stick.GetRawAxis(5); //Possibly reversed
         //double Throttle = m_stick.GetRawAxis(3); //Change to whatever the Z axis is
 
 //all button bindings need to be tested
-        climbButton = m_stick.GetRawButtonPressed(2); //Fire!
-        armButtonDeploy = m_stick.GetRawButtonPressed(1); //Misnomer. You don't need to hold the button
-        armButtonReturn = m_stick.GetRawButtonReleased(2); // don't know
-        grabberButton = m_stick.GetRawButtonPressed(6);
+        double climbButton = m_stick.GetRawButtonPressed(2); //Fire!
+        double armButtonDeploy = m_stick.GetRawButtonPressed(1); //Misnomer. You don't need to hold the button
+        double armButtonReturn = m_stick.GetRawButtonReleased(2); // don't know
+        double grabberButton = m_stick.GetRawButtonPressed(6);
         double buttonA = m_stick.GetRawButtonPressed(3);
         double buttonB = m_stick.GetRawButtonPressed(3);
         double buttonC = m_stick.GetRawButtonPressed(4);
@@ -240,12 +261,6 @@ else {
 
 }
 
-
-
-//bifle
-
-
-// https://cynosure.neocities.org/topsneaky.html
 
 void Robot::DisabledInit() {}
 void Robot::DisabledPeriodic() {}
