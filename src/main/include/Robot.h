@@ -43,6 +43,10 @@ class Robot : public frc::TimedRobot {
 
  private:
 
+   double CalcGrabberPositionOne(double arm);
+   double CalcGrabberPositionTwo(double arm);
+
+
 
   frc::SendableChooser<std::string> m_chooser;
     //"Joystick"
@@ -76,7 +80,7 @@ frc::MecanumDrive m_robotDrive{m_frontRightMotor, m_backRightMotor, m_frontLeftM
 //Binding motors to controllers, season one, episode four
   //Neo motors
   static const int armMotorDeviceID = 3;
-  static const int grabberMotorDeviceID = 2; //the "wrist"
+  static const int grabberMotorDeviceID = 11; //the "wrist"
   static const int climbMotorDeviceID = 1;
   
 
@@ -116,13 +120,14 @@ frc::MecanumDrive m_robotDrive{m_frontRightMotor, m_backRightMotor, m_frontLeftM
   };
 
   // DETERMINE THESE EXPERIMENTALLY!!!!!!!
-  pidCoeff m_armCoeff {0.02, 0.0, 0.7, 0.0, 0.0, -1.0, 1.0};
+  pidCoeff m_armCoeff {2.0e-4, 1e-6, 0.0, 0.0, 0.0, -1.0, 1.0};
   pidCoeff m_grabberCoeff {0.13, 0.0, 0.0, 0.0, 0.0, -1.0, 1.0};
   
-  double m_armRotations[2] {0.0, 1.0}; //0 is undeployed, 1 is deployed
+  double m_armRotations[2] {0.0, 186.2}; //0 is undeployed, 1 is deployed
   double m_grabberRotations[2] {0.0, 0.0}; //0 is undeployed or in the upright position, 1 is deployed
 
   double m_button; 
+  bool m_lowTriggerToggle;
 
 };
 
