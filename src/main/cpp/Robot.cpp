@@ -64,12 +64,12 @@ void Robot::AutonomousPeriodic() {
     //limlight network tables?
     //These don't show up in the 2021 bot's code but they are in the docs. Comment out if things don't want to work.
 
-    std::shared_ptr<NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
+    std::shared_ptr<NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight-wumpus");
     double targetArea = table->GetNumber("ta", 0.0);
     double targetSkew = table->GetNumber("ts", 0.0);
 
-    double ty = m_table->GetNumber("ty", 0.0);
-    double tx = m_table->GetNumber("tx", 0.0);
+    double ty = table->GetNumber("ty", 0.0);
+    double tx = table->GetNumber("tx", 0.0);
 
     if (abs(ty) >= 1) {
         if (ty <= 1) {
@@ -116,11 +116,11 @@ void Robot::TeleopPeriodic() {
         //double Throttle = m_stick.GetRawAxis(3); //Change to whatever the Z axis is
 
 //all button bindings need to be tested
-        climbButton = m_stick.GetRawButtonPressed(2); //Fire!
+        climbButton = m_stick.GetRawButton(2); //Fire!
 
         armButtonDeploy = m_stick.GetRawButtonPressed(1); //Misnomer. You don't need to hold the button
         armButtonReturn = m_stick.GetRawButtonReleased(2); // don't know
-        grabberButton = m_stick.GetRawButtonPressed(6);
+        grabberButton = m_stick.GetRawButtonPressed(11);
         double buttonA = m_stick.GetRawButtonPressed(3);
         double buttonB = m_stick.GetRawButtonPressed(3);
         double buttonC = m_stick.GetRawButtonPressed(4);
@@ -148,23 +148,47 @@ void Robot::TeleopPeriodic() {
 
   xboxMode(); //change to fighterMode() if the joystick works
 */
-  bool lowTriggerToggle;
-  bool triggerToggle;
 
   m_robotDrive.DriveCartesian(-driveY, driveX, -driveZ); //https://docs.wpilib.org/en/stable/docs/software/actuators/wpi-drive-classes.html
   
 
-  if (climbButton && m_climbEncoder.GetVelocity() < 500) {
-    m_climbMotor.Set(0.25); //don't know if this will work
+  if (climbButton /*&& m_climbEncoder.GetVelocity() < 500*/) {
+    m_climbMotor.Set(-0.50);
+  } 
+  else {
+    m_climbMotor.Set(0.0);
   }
 
-//for testing button binding
 
-  if (m_stick.GetRawButton(m_button)) {
-    m_armPIDController.SetReference(m_armRotations[1], rev::ControlType::kPosition);
-    std::cout << "button pressed = " << m_armRotations[1] << "\n";
-    std::cout << "arm encoder position: " << m_armEncoder.GetPosition() << "\n";
+
+  //for testing button binding
+  if (m_stick.GetRawButton(9)) {
+    m_armPIDController.SetReference(m_armRotations[1], rev::ControlType::kSmartMotion);
+    //std::cout << "button pressed = " << m_armRotations[1] << "\n";
+    //std::cout << "arm encoder position: " << m_armEncoder.GetPosition() << "\n";
+  } else {
+    m_armPIDController.SetReference(0.0, rev::ControlType::kSmartMotion);
   }
+
+  //if (m_stick.GetRawButtonPressed(9)) {
+    if (m_armEncoder.GetPosition() < 160.7) {
+      //m_armPIDController.SetReference(m_armRotations[1], rev::ControlType::kSmartMotion);
+      double grabberPosition = CalcGrabberPositionOne(m_armEncoder.GetPosition());
+      std::cout << "Arm: " << m_armEncoder.GetPosition() << "  wrist: "
+            << m_grabberEncoder.GetPosition() << "  calc: " << grabberPosition << "\n";
+      m_grabberPIDController.SetReference(grabberPosition, rev::ControlType::kPosition);
+    }
+    else if (m_armEncoder.GetPosition() >= 160.7 && m_armEncoder.GetPosition() <= 186.2) {
+    //m_armPIDController.SetReference(m_armRotations[2], rev::ControlType::kSmartMotion);{
+      double grabberPosition = CalcGrabberPositionTwo(m_armEncoder.GetPosition());
+      std::cout << "Arm: " << m_armEncoder.GetPosition() << "  wrist: "
+            << m_grabberEncoder.GetPosition() << "  calc: " << grabberPosition << "\n";
+      m_grabberPIDController.SetReference(grabberPosition, rev::ControlType::kPosition);
+    }
+  //}
+
+
+  
 
   
   
@@ -270,19 +294,20 @@ else {
 */
 
   if (grabberButton) {                                         // Low Trigger toggles the piston
-      if (!lowTriggerToggle);
+  std::cout << "button pressed \n";
+      if (!m_lowTriggerToggle) { 
         m_grabberPistonLeft.Set(frc::DoubleSolenoid::Value::kForward);
         m_grabberPistonRight.Set(frc::DoubleSolenoid::Value::kForward); //not sure about this
-        lowTriggerToggle = true;
+        m_lowTriggerToggle = true;
   }
     else {
         m_grabberPistonLeft.Set(frc::DoubleSolenoid::Value::kReverse);
         m_grabberPistonRight.Set(frc::DoubleSolenoid::Value::kReverse);
-        lowTriggerToggle = false;
+        m_lowTriggerToggle = false;
   }
 
 }
-
+}
 
 //bifle
 
@@ -305,6 +330,23 @@ void Robot::InitializePIDControllers() {
   m_grabberPIDController.SetIZone(m_grabberCoeff.kIz);
   m_grabberPIDController.SetFF(m_grabberCoeff.kFF);
   m_grabberPIDController.SetOutputRange(m_grabberCoeff.kMinOutput, m_grabberCoeff.kMaxOutput);
+
+  std::cout << "Init PID: " << m_grabberCoeff.kP << " " << m_grabberCoeff.kI << " " << m_grabberCoeff.kD
+            << " " << m_grabberCoeff.kIz << " " << m_grabberCoeff.kFF << " " << m_grabberCoeff.kMinOutput
+            << " " << m_grabberCoeff.kMaxOutput << "\n";
+
+
+  // default smart motion coefficients
+  //double kMaxVel = 550, kMinVel = 0, kMaxAcc = 250, kAllErr = 0;
+  //double kMaxVel = 6000, kMinVel = 0, kMaxAcc = 3000, kAllErr = 0;
+  //double kMaxVel = 9000, kMinVel = 0, kMaxAcc = 5000, kAllErr = 0;
+  double kMaxVel = 4500, kMinVel = 0, kMaxAcc = 2500, kAllErr = 0;
+
+
+  m_armPIDController.SetSmartMotionMaxVelocity(kMaxVel);
+  m_armPIDController.SetSmartMotionMinOutputVelocity(kMinVel);
+  m_armPIDController.SetSmartMotionMaxAccel(kMaxAcc);
+  m_armPIDController.SetSmartMotionAllowedClosedLoopError(kAllErr);
 }
 
 void Robot::InitializeDashboard() {
@@ -351,11 +393,11 @@ void Robot::ReadDashboard () {
     m_armPIDController.SetOutputRange(min, max); 
     m_armCoeff.kMinOutput = min; m_armCoeff.kMaxOutput = max; 
   }
-  p   = frc::SmartDashboard::GetNumber("Gear P Gain", 0);
-  i   = frc::SmartDashboard::GetNumber("Gear I Gain", 0);
-  d   = frc::SmartDashboard::GetNumber("Gear D Gain", 0);
-  min = frc::SmartDashboard::GetNumber("Gear Min Output", 0);
-  max = frc::SmartDashboard::GetNumber("Gear Max Output", 0);
+  p   = frc::SmartDashboard::GetNumber("Grabber P Gain", 0);
+  i   = frc::SmartDashboard::GetNumber("Grabber I Gain", 0);
+  d   = frc::SmartDashboard::GetNumber("Grqbber D Gain", 0);
+  min = frc::SmartDashboard::GetNumber("Grabber Min Output", 0);
+  max = frc::SmartDashboard::GetNumber("Grabber Max Output", 0);
 
   // If PID coefficients on SmartDashboard have changed, write new values to controller
   if ((p != m_grabberCoeff.kP)) { m_grabberPIDController.SetP(p); m_grabberCoeff.kP = p; }
@@ -379,10 +421,26 @@ std::cout << "Read dashboard button: " << m_button << "\n";
 void Robot::DisabledInit() {}
 void Robot::DisabledPeriodic() {}
 
-void Robot::TestInit() {}
+void Robot::TestInit() {
+  ReadDashboard(); 
+  InitializePIDControllers();
+  std::cout << "TestInit\n";
+}
 
 void Robot::TestPeriodic() {
+        //m_grabberMotor.Set(0.3);
+        //m_grabberPIDController.SetReference(100.0, rev::ControlType::kPosition);
 
+        std::cout << "Arm: " << m_armEncoder.GetPosition() << "  Wrist: " << m_grabberEncoder.GetPosition()  << "\n";
+
+}
+
+double Robot::CalcGrabberPositionOne(double arm) {
+
+  return  0.386*arm + 1.26;
+}
+double Robot::CalcGrabberPositionTwo(double arm) {
+  return 1054 + -11.1*arm + 0.0305*arm*arm; 
 }
 
 #ifndef RUNNING_FRC_TESTS
