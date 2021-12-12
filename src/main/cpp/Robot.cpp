@@ -45,6 +45,15 @@ void Robot::RobotPeriodic() {}
  * if-else structure below with additional strings. If using the SendableChooser
  * make sure to add them to the chooser code above as well.
  */
+
+void Robot::ArmDeploy() {
+  //Arm functionality coming soon!
+}
+
+void Robot::ArmRetract(){
+  //Any day now
+}
+
 void Robot::AutonomousInit() {
   /*
   m_autoSelected = m_chooser.GetSelected();
@@ -57,10 +66,13 @@ void Robot::AutonomousInit() {
   } else {
     // Default Auto goes here
   }
+  
   */
 }
 
 void Robot::AutonomousPeriodic() {
+  if (autoTimer.Get() <= 0.1){ bool isHolding = true; }
+
     //limlight network tables?
     //These don't show up in the 2021 bot's code but they are in the docs. Comment out if things don't want to work.
 
@@ -71,6 +83,8 @@ void Robot::AutonomousPeriodic() {
     double ty = table->GetNumber("ty", 0.0);
     double tx = table->GetNumber("tx", 0.0);
 
+    if (isHolding == true) {
+
     if (abs(ty) >= 1) {
         if (ty <= 1) {
             m_robotDrive.DriveCartesian(0.5,0,ty);
@@ -79,7 +93,25 @@ void Robot::AutonomousPeriodic() {
             m_robotDrive.DriveCartesian(0.5,0,-ty);
         }
     }
+  else {
+    if (targetArea < 0.25){
+      m_robotDrive.DriveCartesian(0.5, 0, 0);
+    }
+    else if (targetArea > 0.25) { //placeholder for 
+        m_grabberPistonLeft.Set(frc::DoubleSolenoid::Value::kReverse);
+        m_grabberPistonRight.Set(frc::DoubleSolenoid::Value::kReverse);
+      isHolding = false;
+    }
+      else {
+      m_robotDrive.DriveCartesian(0.5, 0, 0);
+      }
+    }
+  }
+  else if (isHolding == false) {
+    m_robotDrive.DriveCartesian(-0.5, 0, 0);   
+  }
 }
+
 /*
   autoTimer.Start();
   if (autoTimer.Get() <= 0.25) {
@@ -192,106 +224,6 @@ void Robot::TeleopPeriodic() {
 
   
   
-/*
-  if (armButtonDeploy) {
-    //This raises/lowers the arm for putting on the gear
-    m_armPIDController.SetReference(m_armRotations[1], rev::ControlType::kPosition);
-    m_grabberPIDController.SetReference(m_grabberRotations[0], rev::ControlType::kPosition); //figure out equation
-    armDeployed = true;
-    if (armDeployed) {
-      m_grabberPIDController.SetReference(m_grabberRotations[1], rev::ControlType::kPosition);
-      grabberDeployed = true;
-    }
-    
-
-/*
-    //grabber rotates to soft position 1
-      if (m_armEncoder.GetPosition() == 0 && m_grabberEncoder.GetPosition() < x ) {
-        m_armMotor.Set(0);
-        m_grabberMotor.Set(0.25);
-      }
-
-      //arm moves up to vertical to soft position 2
-      else if (m_armEncoder.GetPosition() < v && m_grabberEncoder.GetPosition() == x) {
-        m_grabberMotor.Set(0);
-        m_armMotor.Set(0.25);
-      }
-
-      //grabber rotates backwards to soft position 3 (movement to soft position 2 and 3 may be combined at a later point but for now they're separated for code simplicity)
-      else if (m_armEncoder.GetPosition() == v && m_grabberEncoder.GetPosition() > y) {
-        m_armMotor.Set(0);
-        m_grabberMotor.Set(-0.25);
-      }
-
-      //arm rotates down to floor to final position
-      else if (m_armEncoder.GetPosition() < z) {
-        m_grabberMotor.Set(0);
-        m_armMotor.Set(0.25);
-      }
-
-      else {
-        m_grabberMotor.Set(0); 
-        m_armMotor.Set(0);
-      } 
-      
-}
-else {
-  m_armMotor.Set(0);
-  m_grabberMotor.Set(0);
-  
-}
-else {
-  m_armMotor.Set(0);
-  m_grabberMotor.Set(0);
-}
-
-
-if (armButtonReturn) {
-    m_armPIDController.SetReference(m_armRotations[0], rev::ControlType::kPosition);
-    m_grabberPIDController.SetReference(m_grabberRotations[0], rev::ControlType::kPosition); //grabber should automatically go back up by the equation right??
-    armDeployed = false;
-    grabberDeployed = false;
-  
-/*  
-  //arm rotates back to vertical
-  if (m_armEncoder.GetPosition() == z && m_grabberEncoder.GetPosition() == y) {
-    if (m_armEncoder.GetPosition() > v) {
-    m_armMotor.Set(-0.25);
-    m_grabberMotor.Set(0);
-    }
-    //grabber rotates
-    else if (m_armEncoder.GetPosition() == v && m_grabberEncoder.GetPosition() < x) {
-      m_armMotor.Set(0);
-      m_grabberMotor.Set(0.25);
-    }
-    //arm rotates to initial position
-    else if (m_armEncoder.GetPosition() > 0 && m_grabberEncoder.GetPosition() == x) {
-      m_armMotor.Set(-0.25);
-      m_grabberMotor.Set(0);
-    }
-    //grabber rotates to initial position
-    else if (m_armEncoder.GetPosition() == 0 && m_grabberEncoder.GetPosition() > 0) {
-      m_armMotor.Set(0);
-      m_grabberMotor.Set(-0.25);
-    }
-    else {
-      m_armMotor.Set(0);
-      m_grabberMotor.Set(0);
-    } 
-  }
-}
-else {
-  m_armMotor.Set(0);
-  m_grabberMotor.Set(0);
-}
-
-}
-else {
-  m_armMotor.Set(0);
-  m_grabberMotor.Set(0);
-}
-
-*/
 
   if (grabberButton) {                                         // Low Trigger toggles the piston
   std::cout << "button pressed \n";
@@ -434,6 +366,7 @@ void Robot::TestPeriodic() {
         std::cout << "Arm: " << m_armEncoder.GetPosition() << "  Wrist: " << m_grabberEncoder.GetPosition()  << "\n";
 
 }
+
 
 double Robot::CalcGrabberPositionOne(double arm) {
 

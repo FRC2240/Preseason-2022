@@ -17,7 +17,7 @@
 #include <networktables/NetworkTable.h>
 #include <networktables/NetworkTableInstance.h>
 
-#include "frc/smartdashboard/Smartdashboard.h"
+#include "frc/smartdashboard/SmartDashboard.h"
 #include "networktables/NetworkTable.h"
 #include "networktables/NetworkTableInstance.h"
 
@@ -40,6 +40,9 @@ class Robot : public frc::TimedRobot {
   void InitializeDashboard();
   void InitializePIDControllers();
   void ReadDashboard();
+  void ArmDeploy();
+  void ArmRetract();
+
 
  private:
 
@@ -127,6 +130,7 @@ frc::MecanumDrive m_robotDrive{m_frontRightMotor, m_backRightMotor, m_frontLeftM
   double m_grabberRotations[2] {0.0, 0.0}; //0 is undeployed or in the upright position, 1 is deployed
 
   double m_button; 
+  bool isHolding;
   bool m_lowTriggerToggle;
 
 };
