@@ -78,10 +78,10 @@ void Robot::AutonomousPeriodic() {
 
     std::shared_ptr<NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight-wumpus");
     double targetArea = table->GetNumber("ta", 0.0);
-    double targetSkew = table->GetNumber("ts", 0.0);
+    //double targetSkew = table->GetNumber("ts", 0.0);
 
     double ty = table->GetNumber("ty", 0.0);
-    double tx = table->GetNumber("tx", 0.0);
+    //double tx = table->GetNumber("tx", 0.0);
 
     if (isHolding == true) {
 
@@ -137,8 +137,8 @@ void Robot::TeleopPeriodic() {
   double armButtonDeploy;
   double armButtonReturn;
   double grabberButton;
-  bool armDeployed = false;
-  bool grabberDeployed = false;
+  //bool armDeployed = false;
+  //bool grabberDeployed = false;
   
     //void fighterMode() { 
       // function to read controls for the joystick
@@ -153,10 +153,10 @@ void Robot::TeleopPeriodic() {
         armButtonDeploy = m_stick.GetRawButtonPressed(1); //Misnomer. You don't need to hold the button
         armButtonReturn = m_stick.GetRawButtonReleased(2); // don't know
         grabberButton = m_stick.GetRawButtonPressed(11);
-        double buttonA = m_stick.GetRawButtonPressed(3);
-        double buttonB = m_stick.GetRawButtonPressed(3);
-        double buttonC = m_stick.GetRawButtonPressed(4);
-        double buttonE = m_stick.GetRawButtonPressed(8);
+        //double buttonA = m_stick.GetRawButtonPressed(3);
+        //double buttonB = m_stick.GetRawButtonPressed(3);
+        //double buttonC = m_stick.GetRawButtonPressed(4);
+        //double buttonE = m_stick.GetRawButtonPressed(8);
         
 /*
   void xboxMode() {
