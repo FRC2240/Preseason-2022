@@ -40,8 +40,7 @@ class Robot : public frc::TimedRobot {
   void InitializeDashboard();
   void InitializePIDControllers();
   void ReadDashboard();
-  void ArmDeploy();
-  void ArmRetract();
+
 
 
  private:

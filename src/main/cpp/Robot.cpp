@@ -46,13 +46,6 @@ void Robot::RobotPeriodic() {}
  * make sure to add them to the chooser code above as well.
  */
 
-void Robot::ArmDeploy() {
-  //Arm functionality coming soon!
-}
-
-void Robot::ArmRetract(){
-  //Any day now
-}
 
 void Robot::AutonomousInit() {
   /*
@@ -85,30 +78,30 @@ void Robot::AutonomousPeriodic() {
 
     if (isHolding == true) {
 
-    if (abs(ty) >= 1) {
+    if (abs(ty) >= 0.1) {
         if (ty <= 1) {
-            m_robotDrive.DriveCartesian(0.5,0,ty);
+            m_robotDrive.DriveCartesian(0,0.25,ty);
         }
         if (ty >= 1){
-            m_robotDrive.DriveCartesian(0.5,0,-ty);
+            m_robotDrive.DriveCartesian(0,0.25,-ty);
         }
     }
   else {
     if (targetArea < 0.25){
-      m_robotDrive.DriveCartesian(0.5, 0, 0);
+      m_robotDrive.DriveCartesian(0, 0.25, 0);
     }
-    else if (targetArea > 0.25) { //placeholder for 
+    else if (targetArea > 0.25) { //placeholder for how far the target is
         m_grabberPistonLeft.Set(frc::DoubleSolenoid::Value::kReverse);
         m_grabberPistonRight.Set(frc::DoubleSolenoid::Value::kReverse);
       isHolding = false;
     }
       else {
-      m_robotDrive.DriveCartesian(0.5, 0, 0);
+      m_robotDrive.DriveCartesian(0, 0.25, 0);
       }
     }
   }
   else if (isHolding == false) {
-    m_robotDrive.DriveCartesian(-0.5, 0, 0);   
+    m_robotDrive.DriveCartesian(0, -0.25, 0);
   }
 }
 
@@ -122,17 +115,17 @@ void Robot::AutonomousPeriodic() {
 }
  */
 void Robot::TeleopInit() {
-  ReadDashboard(); 
+  ReadDashboard();
   InitializePIDControllers();
-  std::cout << "arm rotations 1: " << m_armRotations[1] << "\n"; 
+  std::cout << "arm rotations 1: " << m_armRotations[1] << "\n";
 }
 
 void Robot::TeleopPeriodic() {
   //read joystick controls
-  // I hate you, Ethan 
+  // I hate you, Ethan
   double driveY;
   double driveX;
-  double driveZ; 
+  double driveZ;
   double climbButton;
   double armButtonDeploy;
   double armButtonReturn;
@@ -140,11 +133,13 @@ void Robot::TeleopPeriodic() {
   //bool armDeployed = false;
   //bool grabberDeployed = false;
   
-    //void fighterMode() { 
+    //void fighterMode() {
       // function to read controls for the joystick
         driveY = m_stick.GetRawAxis(0);                    //Possibly Reversed
         driveX = m_stick.GetRawAxis(1);
-        driveZ = m_stick.GetRawAxis(5); //Possibly reversed
+        driveZ = m_stick.GetRawAxis(5);
+        driveZ = driveZ*0.5;
+          //Possibly reversed
         //double Throttle = m_stick.GetRawAxis(3); //Change to whatever the Z axis is
 
 //all button bindings need to be tested
@@ -227,7 +222,7 @@ void Robot::TeleopPeriodic() {
 
   if (grabberButton) {                                         // Low Trigger toggles the piston
   std::cout << "button pressed \n";
-      if (!m_lowTriggerToggle) { 
+      if (!m_lowTriggerToggle) {
         m_grabberPistonLeft.Set(frc::DoubleSolenoid::Value::kForward);
         m_grabberPistonRight.Set(frc::DoubleSolenoid::Value::kForward); //not sure about this
         m_lowTriggerToggle = true;
@@ -248,7 +243,7 @@ void Robot::TeleopPeriodic() {
 
 
 
-void Robot::InitializePIDControllers() { 
+void Robot::InitializePIDControllers() {
   m_armPIDController.SetP(m_armCoeff.kP);
   m_armPIDController.SetI(m_armCoeff.kI);
   m_armPIDController.SetD(m_armCoeff.kD);
@@ -380,5 +375,6 @@ double Robot::CalcGrabberPositionTwo(double arm) {
 int main() {
   return frc::StartRobot<Robot>();
 }
+
 #endif
 
